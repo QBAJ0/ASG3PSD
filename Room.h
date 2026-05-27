@@ -11,6 +11,7 @@
 #include "Location.h"
 #include <map>
 #include <memory>
+#include <vector>
 
 class Passage;
 
@@ -20,13 +21,11 @@ public:
 
     Room(const std::string &, const std::string &, std::shared_ptr<Command>);
 
-//    void addItem(Item*);
-//    void removeItem(const std::string&);
-//    Item* getItem(const std::string&);
-//    Item* retrieveItem(const std::string&);
-//    void addCharacter(Character*);
-//    void removeCharacter(const std::string&);
-//    Character* getCharacter(const std::string&);
+    void addItem(std::shared_ptr<Item>);
+
+    std::shared_ptr<Item> getItem(const std::string &) const;
+
+    std::shared_ptr<Item> removeItem(const std::string &);
 
     void addPassage(const std::string &, std::shared_ptr<Passage>);
 
@@ -35,8 +34,7 @@ public:
     std::shared_ptr<Passage> getPassage(const std::string &);
 
 protected:
-//    std::vector<Item*> items;
-//    std::vector<Character*> characters;
+    std::vector<std::shared_ptr<Item>> items;
     std::map<std::string, std::shared_ptr<Passage>> passageMap;
 };
 
