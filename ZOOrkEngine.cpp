@@ -85,13 +85,38 @@ void ZOOrkEngine::handleLookCommand(std::vector<std::string> arguments) {
 }
 
 void ZOOrkEngine::handleTakeCommand(std::vector<std::string> arguments) {
-    // To be implemented
-    std::cout << "This functionality is not yet enabled.\n";
+    if (arguments.empty()) {
+        std::cout << "Take what?\n";
+        return;
+    }
+
+    std::string itemName = arguments[0];
+    std::shared_ptr<Item> item = player->getCurrentRoom()->removeItem(itemName);
+
+    if (!item) {
+        std::cout << "You do not see that item here.\n";
+        return;
+    }
+
+    player->addItem(item);
+    std::cout << "Taken.\n";
 }
 
 void ZOOrkEngine::handleDropCommand(std::vector<std::string> arguments) {
-    // To be implemented
-    std::cout << "This functionality is not yet enabled.\n";
+    if (arguments.empty()) {
+        std::cout << "Drop what?\n";
+        return;
+    }
+
+    std::string itemName = arguments[0];
+    std::shared_ptr<Item> item = player->removeItem(itemName);
+    if (!item) {
+        std::cout << "You are not carrying that item.\n";
+        return;
+    }
+
+    player->getCurrentRoom()->addItem(item);
+    std::cout << "Dropped.\n";
 }
 
 void ZOOrkEngine::handleQuitCommand(std::vector<std::string> arguments) {
