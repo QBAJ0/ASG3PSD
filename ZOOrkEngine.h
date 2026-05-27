@@ -22,6 +22,7 @@ public:
 
 private:
     bool gameOver = false;
+    bool rustyKeyRevealed = false;
     Player *player;
 
     void handleGoCommand(std::vector<std::string>);
@@ -33,6 +34,8 @@ private:
     void handleDropCommand(std::vector<std::string>);
 
     void handleInventoryCommand();
+
+    void handleDigCommand();
 
     void handleQuitCommand(std::vector<std::string>);
 

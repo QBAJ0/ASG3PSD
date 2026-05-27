@@ -38,6 +38,8 @@ void ZOOrkEngine::run() {
             handleDropCommand(arguments);
         } else if (command == "inventory") {
             handleInventoryCommand();
+        } else if (command == "dig") {
+            handleDigCommand();
         } else if (command == "quit") {
             handleQuitCommand(arguments);
         } else {
@@ -137,6 +139,30 @@ void ZOOrkEngine::handleInventoryCommand() {
         std::cout << "- " << item->getName() << "\n";
     }
     std::cout << "\n";
+}
+
+void ZOOrkEngine::handleDigCommand() {
+    Room* currentRoom = player->getCurrentRoom();
+    if (currentRoom->getName() != "deep-forest") {
+        std::cout << "There is nothing useful to dig here.\n\n";
+        return;
+    }
+
+    if (!player->getItem("shovel")) {
+        std::cout << "You need something to dig with.\n\n";
+        return;
+    }
+
+    if (rustyKeyRevealed) {
+        std::cout << "You already dug up everything useful here.\n\n";
+        return;
+    }
+
+    auto key = std::make_shared<Item>("key",
+                                      "An old rusty key caked in dirt.");
+    currentRoom->addItem(key);
+    rustyKeyRevealed = true;
+    std::cout << "You dig beneath the old tree and uncover a key.\n\n";
 }
 
 void ZOOrkEngine::handleQuitCommand(std::vector<std::string> arguments) {
