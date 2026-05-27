@@ -25,15 +25,10 @@ void Door::enter() {
         return;
     }
 
-    if (getTo()->getName() == "attic" && !player->getItem("lantern")) {
-        player->setCurrentRoom(getFrom());
+    if (getTo()->getName() == "attic" && !player->isAtticLanternUsed()) {
         std::cout << "It is too dark upstairs to see.\n\n";
         return;
     }
 
     Passage::enter();
-
-    if (getTo()->getName() == "attic" && player->getItem("key") && player->getItem("lantern")) {
-        std::cout << "The future shall hold more quests for you.\n\n";
-    }
 }

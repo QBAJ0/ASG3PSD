@@ -39,8 +39,6 @@ void ZOOrkEngine::run() {
             handleDropCommand(arguments);
         } else if (command == "inventory") {
             handleInventoryCommand();
-        } else if (command == "dig") {
-            handleDigCommand();
         } else if (command == "use") {
             handleUseCommand(arguments);
         } else if (command == "quit") {
@@ -76,8 +74,13 @@ void ZOOrkEngine::handleGoCommand(std::vector<std::string> arguments) {
 }
 
 void ZOOrkEngine::handleLookCommand(std::vector<std::string> arguments) {
+    Room* currentRoom = player->getCurrentRoom();
     if (arguments.empty()) {
-        std::cout << player->getCurrentRoom()->getDescription() << "\n\n";
+        if (currentRoom->getName() == "attic" && !player->isAtticLanternUsed()) {
+            std::cout << "It is too dark upstairs to see.\n\n";
+            return;
+        }
+        std::cout << currentRoom->getDescription() << "\n\n";
         return;
     }
     std::string itemName = arguments[0];
@@ -144,30 +147,6 @@ void ZOOrkEngine::handleInventoryCommand() {
     std::cout << "\n";
 }
 
-void ZOOrkEngine::handleDigCommand() {
-    Room* currentRoom = player->getCurrentRoom();
-    if (currentRoom->getName() != "deep-forest") {
-        std::cout << "There is nothing useful to dig here.\n\n";
-        return;
-    }
-
-    if (!player->getItem("shovel")) {
-        std::cout << "You need something to dig with.\n\n";
-        return;
-    }
-
-    if (rustyKeyRevealed) {
-        std::cout << "You already dug up everything useful here.\n\n";
-        return;
-    }
-
-    auto key = std::make_shared<Item>("key",
-                                      "An old rusty key caked in dirt.");
-    currentRoom->addItem(key);
-    rustyKeyRevealed = true;
-    std::cout << "You dig beneath the old tree and uncover a key.\n\n";
-}
-
 void ZOOrkEngine::handleUseCommand(std::vector<std::string> arguments) {
     if (arguments.empty()) {
         std::cout << "Use what?\n\n";
@@ -175,36 +154,85 @@ void ZOOrkEngine::handleUseCommand(std::vector<std::string> arguments) {
     }
 
     std::string itemName = arguments[0];
-    if (itemName != "key") {
-        std::cout << "You can't use that here.\n\n";
+
+    if (itemName == "shovel") {
+        Room* currentRoom = player->getCurrentRoom();
+        if (currentRoom->getName() != "deep-forest") {
+            std::cout << "There is nothing useful to dig here.\n\n";
+            return;
+        }
+
+        if (!player->getItem("shovel")) {
+            std::cout << "You do not have a shovel.\n\n";
+            return;
+        }
+
+        if (rustyKeyRevealed) {
+            std::cout << "You already dug up everything useful here.\n\n";
+            return;
+        }
+
+        auto key = std::make_shared<Item>("key",
+                                          "An old rusty key caked in dirt.");
+        currentRoom->addItem(key);
+        rustyKeyRevealed = true;
+        std::cout << "You dig beneath the old tree and uncover a key.\n\n";
         return;
     }
 
-    if (!player->getItem("key")) {
-        std::cout << "You do not have a key.\n\n";
+    if (itemName == "key") {
+        if (!player->getItem("key")) {
+            std::cout << "You do not have a key.\n\n";
+            return;
+        }
+
+        Room* currentRoom = player->getCurrentRoom();
+        if (currentRoom->getName() != "living-room") {
+            std::cout << "There is nothing here to unlock with the key.\n\n";
+            return;
+        }
+
+        std::shared_ptr<Passage> upPassage = currentRoom->getPassage("up");
+        std::shared_ptr<Door> atticDoor = std::dynamic_pointer_cast<Door>(upPassage);
+        if (!atticDoor) {
+            std::cout << "There is nothing here to unlock with the key.\n\n";
+            return;
+        }
+
+        if (!atticDoor->isLocked()) {
+            std::cout << "The attic door is already unlocked.\n\n";
+            return;
+        }
+
+        atticDoor->unlock();
+        std::cout << "You unlock the attic door.\n\n";
         return;
     }
 
-    Room* currentRoom = player->getCurrentRoom();
-    if (currentRoom->getName() != "living-room") {
-        std::cout << "There is nothing here to unlock with the key.\n\n";
+    if (itemName == "lantern") {
+        if (!player->getItem("lantern")) {
+            std::cout << "You do not have a lantern.\n\n";
+            return;
+        }
+
+        if (player->getCurrentRoom()->getName() != "attic") {
+            std::cout << "You can't use that here.\n\n";
+            return;
+        }
+
+        if (player->isAtticLanternUsed()) {
+            std::cout << "The lantern is already lighting the attic.\n\n";
+            return;
+        }
+
+        player->setAtticLanternUsed(true);
+        std::cout << "You are in a cramped attic filled with old trunks and cobwebs. \n"
+                     "There is a large scribble in front of you saying "
+                     "\"The future shall holds more quest for you\".\n\n";
         return;
     }
 
-    std::shared_ptr<Passage> upPassage = currentRoom->getPassage("up");
-    std::shared_ptr<Door> atticDoor = std::dynamic_pointer_cast<Door>(upPassage);
-    if (!atticDoor) {
-        std::cout << "There is nothing here to unlock with the key.\n\n";
-        return;
-    }
-
-    if (!atticDoor->isLocked()) {
-        std::cout << "The attic door is already unlocked.\n\n";
-        return;
-    }
-
-    atticDoor->unlock();
-    std::cout << "You unlock the attic door.\n\n";
+    std::cout << "You can't use that here.\n\n";
 }
 
 void ZOOrkEngine::handleQuitCommand(std::vector<std::string> arguments) {

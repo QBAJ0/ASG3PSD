@@ -35,8 +35,6 @@ private:
 
     void handleInventoryCommand();
 
-    void handleDigCommand();
-
     void handleUseCommand(std::vector<std::string>);
 
     void handleQuitCommand(std::vector<std::string>);

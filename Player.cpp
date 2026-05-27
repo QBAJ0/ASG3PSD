@@ -41,3 +41,11 @@ std::shared_ptr<Item> Player::removeItem(const std::string &name) {
 const std::vector<std::shared_ptr<Item>> &Player::getInventory() const {
     return inventory;
 }
+
+bool Player::isAtticLanternUsed() const {
+    return atticLanternUsed;
+}
+
+void Player::setAtticLanternUsed(bool used) {
+    atticLanternUsed = used;
+}

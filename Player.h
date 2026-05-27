@@ -34,6 +34,10 @@ public:
 
     const std::vector<std::shared_ptr<Item>> &getInventory() const;
 
+    bool isAtticLanternUsed() const;
+
+    void setAtticLanternUsed(bool);
+
     Player(const Player &) = delete;
 
     Player &operator=(const Player &) = delete;
@@ -42,6 +46,7 @@ private:
     static Player *playerInstance;
     Room* currentRoom;
     std::vector<std::shared_ptr<Item>> inventory;
+    bool atticLanternUsed = false;
 
     Player() : Character("You", "You are a person, alike in dignity to any other, but uniquely you."),
                currentRoom(new NullRoom()) {}
