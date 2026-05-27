@@ -3,6 +3,7 @@
 //
 
 #include "ZOOrkEngine.h"
+#include "Door.h"
 
 #include <algorithm>
 #include <cctype>
@@ -40,6 +41,8 @@ void ZOOrkEngine::run() {
             handleInventoryCommand();
         } else if (command == "dig") {
             handleDigCommand();
+        } else if (command == "use") {
+            handleUseCommand(arguments);
         } else if (command == "quit") {
             handleQuitCommand(arguments);
         } else {
@@ -163,6 +166,45 @@ void ZOOrkEngine::handleDigCommand() {
     currentRoom->addItem(key);
     rustyKeyRevealed = true;
     std::cout << "You dig beneath the old tree and uncover a key.\n\n";
+}
+
+void ZOOrkEngine::handleUseCommand(std::vector<std::string> arguments) {
+    if (arguments.empty()) {
+        std::cout << "Use what?\n\n";
+        return;
+    }
+
+    std::string itemName = arguments[0];
+    if (itemName != "key") {
+        std::cout << "You can't use that here.\n\n";
+        return;
+    }
+
+    if (!player->getItem("key")) {
+        std::cout << "You do not have a key.\n\n";
+        return;
+    }
+
+    Room* currentRoom = player->getCurrentRoom();
+    if (currentRoom->getName() != "living-room") {
+        std::cout << "There is nothing here to unlock with the key.\n\n";
+        return;
+    }
+
+    std::shared_ptr<Passage> upPassage = currentRoom->getPassage("up");
+    std::shared_ptr<Door> atticDoor = std::dynamic_pointer_cast<Door>(upPassage);
+    if (!atticDoor) {
+        std::cout << "There is nothing here to unlock with the key.\n\n";
+        return;
+    }
+
+    if (!atticDoor->isLocked()) {
+        std::cout << "The attic door is already unlocked.\n\n";
+        return;
+    }
+
+    atticDoor->unlock();
+    std::cout << "You unlock the attic door.\n\n";
 }
 
 void ZOOrkEngine::handleQuitCommand(std::vector<std::string> arguments) {
