@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Room.h"
 #include "ZOOrkEngine.h"
+#include <memory>
 
 
 int main() {

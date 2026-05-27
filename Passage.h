@@ -8,6 +8,7 @@
 #include "NullRoom.h"
 #include "Room.h"
 #include <iostream>
+#include <memory>
 
 class Passage : public Location {
 public:

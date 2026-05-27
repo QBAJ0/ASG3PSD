@@ -4,6 +4,8 @@
 
 #include "ZOOrkEngine.h"
 
+#include <algorithm>
+#include <cctype>
 #include <utility>
 
 ZOOrkEngine::ZOOrkEngine(std::shared_ptr<Room> start) {
