@@ -30,7 +30,7 @@ int main() {
                                    "Trees crowd close together here. A darker trail continues east.\n");
 
     std::shared_ptr<Room> deep_forest = std::make_shared<Room>("deep-forest",
-                                   "The forest canopy blocks most of the light. It is easy to lose your bearings.\n");
+                                   "The forest canopy blocks most of the light. A large dead old tree looms over the clearing.\n");
 
     std::shared_ptr<Room> living_room = std::make_shared<Room>("living-room",
                                    "A dusty living room with faded wallpaper and a staircase leading up.\n");
@@ -49,7 +49,7 @@ int main() {
     Passage::createBasicPassage(living_room.get(), attic.get(), "up", true);
 
     auto leaflet = std::make_shared<Item>("leaflet",
-        "A small leaflet is lying in the grass.");
+        "The darkness upstairs fears what lies buried beneath the old tree.");
     start->addItem(leaflet);
 
     auto shovel = std::make_shared<Item>("shovel",
