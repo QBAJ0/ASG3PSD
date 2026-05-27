@@ -32,6 +32,8 @@ public:
 
     std::shared_ptr<Item> removeItem(const std::string &);
 
+    const std::vector<std::shared_ptr<Item>> &getInventory() const;
+
     Player(const Player &) = delete;
 
     Player &operator=(const Player &) = delete;

@@ -37,3 +37,7 @@ std::shared_ptr<Item> Player::removeItem(const std::string &name) {
     }
     return nullptr;
 }
+
+const std::vector<std::shared_ptr<Item>> &Player::getInventory() const {
+    return inventory;
+}

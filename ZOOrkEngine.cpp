@@ -22,6 +22,9 @@ void ZOOrkEngine::run() {
         std::getline(std::cin, input);
 
         std::vector<std::string> words = tokenizeString(input);
+        if (words.empty()) {
+            continue;
+        }
         std::string command = words[0];
         std::vector<std::string> arguments(words.begin() + 1, words.end());
 
@@ -33,6 +36,8 @@ void ZOOrkEngine::run() {
             handleTakeCommand(arguments);
         } else if (command == "drop") {
             handleDropCommand(arguments);
+        } else if (command == "inventory") {
+            handleInventoryCommand();
         } else if (command == "quit") {
             handleQuitCommand(arguments);
         } else {
@@ -67,7 +72,7 @@ void ZOOrkEngine::handleGoCommand(std::vector<std::string> arguments) {
 
 void ZOOrkEngine::handleLookCommand(std::vector<std::string> arguments) {
     if (arguments.empty()) {
-        std::cout << player->getCurrentRoom()->getDescription() << "\n";
+        std::cout << player->getCurrentRoom()->getDescription() << "\n\n";
         return;
     }
     std::string itemName = arguments[0];
@@ -78,15 +83,15 @@ void ZOOrkEngine::handleLookCommand(std::vector<std::string> arguments) {
     }
 
     if (item) {
-        std::cout << item->getDescription() << "\n";
+        std::cout << item->getDescription() << "\n\n";
     } else {
-        std::cout << "You do not see that item here.\n";
+        std::cout << "You do not see that item here.\n\n";
     }
 }
 
 void ZOOrkEngine::handleTakeCommand(std::vector<std::string> arguments) {
     if (arguments.empty()) {
-        std::cout << "Take what?\n";
+        std::cout << "Take what?\n\n";
         return;
     }
 
@@ -94,29 +99,44 @@ void ZOOrkEngine::handleTakeCommand(std::vector<std::string> arguments) {
     std::shared_ptr<Item> item = player->getCurrentRoom()->removeItem(itemName);
 
     if (!item) {
-        std::cout << "You do not see that item here.\n";
+        std::cout << "You do not see that item here.\n\n";
         return;
     }
 
     player->addItem(item);
-    std::cout << "Taken.\n";
+    std::cout << "Taken.\n\n";
 }
 
 void ZOOrkEngine::handleDropCommand(std::vector<std::string> arguments) {
     if (arguments.empty()) {
-        std::cout << "Drop what?\n";
+        std::cout << "Drop what?\n\n";
         return;
     }
 
     std::string itemName = arguments[0];
     std::shared_ptr<Item> item = player->removeItem(itemName);
     if (!item) {
-        std::cout << "You are not carrying that item.\n";
+        std::cout << "You are not carrying that item.\n\n";
         return;
     }
 
     player->getCurrentRoom()->addItem(item);
-    std::cout << "Dropped.\n";
+    std::cout << "Dropped.\n\n";
+}
+
+void ZOOrkEngine::handleInventoryCommand() {
+    const std::vector<std::shared_ptr<Item>> &items = player->getInventory();
+
+    if (items.empty()) {
+        std::cout << "You are carrying nothing.\n\n";
+        return;
+    }
+
+    std::cout << "You are carrying:\n";
+    for (const auto &item : items) {
+        std::cout << "- " << item->getName() << "\n";
+    }
+    std::cout << "\n";
 }
 
 void ZOOrkEngine::handleQuitCommand(std::vector<std::string> arguments) {
@@ -136,7 +156,11 @@ std::vector<std::string> ZOOrkEngine::tokenizeString(const std::string &input) {
     std::string token;
 
     while (std::getline(ss, token, ' ')) {
-        tokens.push_back(makeLowercase(token));
+        std::string normalized = makeLowercase(token);
+        normalized.erase(std::remove(normalized.begin(), normalized.end(), '\r'), normalized.end());
+        if (!normalized.empty()) {
+            tokens.push_back(normalized);
+        }
     }
 
     return tokens;
