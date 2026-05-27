@@ -66,7 +66,10 @@ void ZOOrkEngine::handleGoCommand(std::vector<std::string> arguments) {
 }
 
 void ZOOrkEngine::handleLookCommand(std::vector<std::string> arguments) {
-    // To be implemented
+    if (arguments.empty()) {
+        std::cout << player->getCurrentRoom()->getDescription() << "\n";
+        return;
+    }
     std::cout << "This functionality is not yet enabled.\n";
 }
 
