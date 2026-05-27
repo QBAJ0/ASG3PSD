@@ -17,13 +17,16 @@ bool Door::isLocked() const {
 }
 
 void Door::enter() {
+    Player *player = Player::instance();
+
     if (locked) {
+        player->setCurrentRoom(getFrom());
         std::cout << "The door is locked.\n\n";
         return;
     }
 
-    Player *player = Player::instance();
     if (getTo()->getName() == "attic" && !player->getItem("lantern")) {
+        player->setCurrentRoom(getFrom());
         std::cout << "It is too dark upstairs to see.\n\n";
         return;
     }
