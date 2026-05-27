@@ -1,3 +1,4 @@
+#include "Item.h"
 #include "RoomDefaultEnterCommand.h"
 #include "Passage.h"
 #include "Player.h"
@@ -46,6 +47,22 @@ int main() {
     Passage::createBasicPassage(forest_edge.get(), deep_forest.get(), "east", true);
     Passage::createBasicPassage(behind_house.get(), living_room.get(), "in", true);
     Passage::createBasicPassage(living_room.get(), attic.get(), "up", true);
+
+    auto leaflet = std::make_shared<Item>("leaflet",
+        "A small leaflet is lying in the grass.");
+    start->addItem(leaflet);
+
+    auto shovel = std::make_shared<Item>("shovel",
+        "A rusty shovel leans against the fence.");
+    side_yard->addItem(shovel);
+
+    auto lantern = std::make_shared<Item>("lantern",
+        "A battery-powered brass lantern sits on a table.");
+    living_room->addItem(lantern);
+
+    auto stick = std::make_shared<Item>("stick",
+        "A sturdy fallen branch lies on the ground.");
+    deep_forest->addItem(stick);
 
     ZOOrkEngine zoork(start);
 
