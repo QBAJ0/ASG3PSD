@@ -1,4 +1,5 @@
 #include "Item.h"
+#include "Door.h"
 #include "RoomDefaultEnterCommand.h"
 #include "Passage.h"
 #include "Player.h"
@@ -46,7 +47,16 @@ int main() {
     Passage::createBasicPassage(behind_house.get(), forest_edge.get(), "east", true);
     Passage::createBasicPassage(forest_edge.get(), deep_forest.get(), "east", true);
     Passage::createBasicPassage(behind_house.get(), living_room.get(), "in", true);
-    Passage::createBasicPassage(living_room.get(), attic.get(), "up", true);
+
+    auto atticDoor = std::make_shared<Door>("living-room_to_attic",
+                                            "A heavy attic door with a rusted lock.",
+                                            living_room.get(), attic.get(), true);
+    living_room->addPassage("up", atticDoor);
+
+    auto atticDownPassage = std::make_shared<Passage>("attic_to_living-room",
+                                                      "A steep staircase leading back down.",
+                                                      attic.get(), living_room.get());
+    attic->addPassage("down", atticDownPassage);
 
     auto leaflet = std::make_shared<Item>("leaflet",
         "The darkness upstairs fears what lies buried beneath the old tree.");
