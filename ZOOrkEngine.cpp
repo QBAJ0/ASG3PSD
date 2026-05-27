@@ -70,7 +70,18 @@ void ZOOrkEngine::handleLookCommand(std::vector<std::string> arguments) {
         std::cout << player->getCurrentRoom()->getDescription() << "\n";
         return;
     }
-    std::cout << "This functionality is not yet enabled.\n";
+    std::string itemName = arguments[0];
+
+    std::shared_ptr<Item> item = player->getCurrentRoom()->getItem(itemName);
+    if (!item) {
+        item = player->getItem(itemName);
+    }
+
+    if (item) {
+        std::cout << item->getDescription() << "\n";
+    } else {
+        std::cout << "You do not see that item here.\n";
+    }
 }
 
 void ZOOrkEngine::handleTakeCommand(std::vector<std::string> arguments) {
